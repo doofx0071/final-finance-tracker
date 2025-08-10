@@ -1,10 +1,20 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { formatCurrency } from "@/lib/utils";
 import { ArrowRight, TrendingUp, Shield, Target, PiggyBank, BarChart3, Smartphone } from "lucide-react";
+import { getServerClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await getServerClient()
+  const { data: { session } } = await supabase.auth.getSession()
+  
+  // If user is already logged in, redirect to dashboard
+  if (session) {
+    redirect('/dashboard')
+  }
+
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -42,11 +52,6 @@ export default function Home() {
               <Link href="/register">
                 <Button size="lg" className="gap-2">
                   Start Free Today <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-              <Link href="/demo">
-                <Button size="lg" variant="outline">
-                  View Demo
                 </Button>
               </Link>
             </div>
